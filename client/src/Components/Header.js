@@ -33,10 +33,10 @@ const Header = () => {
         <StyledLinks to="/">Homepage</StyledLinks>
       </div>
       <div>
-        <StyledLinks to="/profile">Profile</StyledLinks>
+        <StyledLinks to="/feed">Feed</StyledLinks>
       </div>
       <div>
-        <StyledLinks to="/feed">Feed</StyledLinks>
+        <StyledLinks to="/profile">Profile</StyledLinks>
       </div>
       {notLoggedIn ? (
         <StyledLinks to="/login">
@@ -77,10 +77,12 @@ const StyledProfilePic = styled.img`
   height: 40px;
   width: 40px;
   border-radius: 50%;
+  margin-right: 10px;
 `;
 
 const StyledTitle = styled.h2`
   color: ${COLORS.green};
+  margin-left: 10px;
 `;
 
 export default Header;
