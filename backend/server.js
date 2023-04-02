@@ -2,7 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const SpotifyWebApi = require("spotify-web-api-node");
+const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 app.use(cors());
@@ -11,10 +13,18 @@ dotenv.config();
 app.use(express.json());
 
 const { SPOTIFY_CLIENT_SECRET } = process.env;
+const { MONGO_URI } = process.env;
+
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
+
+const client = new MongoClient(MONGO_URI, options);
 
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
-  console.log("hello");
+
   const spotifyApi = new SpotifyWebApi({
     clientId: "acef137a01a44960b92c90df6bf914d5",
     clientSecret: SPOTIFY_CLIENT_SECRET,
@@ -38,7 +48,7 @@ app.post("/refresh", (req, res) => {
     });
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   const code = req.body.code;
   console.log("Received code:", code); // added console log
 
@@ -48,20 +58,54 @@ app.post("/login", (req, res) => {
     redirectUri: "http://localhost:3000",
   });
 
-  spotifyApi
-    .authorizationCodeGrant(code)
-    .then((data) => {
-      console.log("Access token granted:", data.body.access_token); // added console log
-      res.json({
-        accessToken: data.body.access_token,
-        refreshToken: data.body.refresh_token,
-        expiresIn: data.body.expires_in,
+  try {
+    await client.connect();
+    const db = client.db();
+
+    const data = await spotifyApi.authorizationCodeGrant(code);
+    console.log("Access token granted:", data.body.access_token);
+
+    const { access_token, refresh_token, expires_in } = data.body;
+
+    // Get user's profile info using the Spotify API
+    spotifyApi.setAccessToken(access_token);
+    const user = await spotifyApi.getMe();
+
+    // Store the user's data in MongoDB
+
+    const existingUser = await db
+      .collection("users")
+      .findOne({ spotifyUsername: user.body.id });
+    if (existingUser) {
+      console.log("User already exists in database:", existingUser);
+      return res.json({
+        accessToken: access_token,
+        refreshToken: refresh_token,
+        expiresIn: expires_in,
       });
-    })
-    .catch((err) => {
-      console.log(err); // added console log
-      res.sendStatus(400);
+    }
+
+    await db.collection("users").insertOne({
+      _id: uuidv4(),
+      spotifyUsername: user.body.id,
+      displayName: user.body.display_name,
+      profilePicture: user.body.images[0]?.url,
+      email: user.body.email,
+      playlists: [],
+      status: [],
     });
+
+    res.json({
+      accessToken: access_token,
+      refreshToken: refresh_token,
+      expiresIn: expires_in,
+    });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(400);
+  } finally {
+    client.close();
+  }
 });
 
 app.listen(3001, () => {

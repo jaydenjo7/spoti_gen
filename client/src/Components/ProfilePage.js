@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useAuth from "./useAuth";
+import useAuth from "../useAuth";
 
-const Homepage = ({ code }) => {
+const ProfilePage = ({ code }) => {
   const accessToken = useAuth(code);
   const [userName, setUserName] = useState("");
 
@@ -25,8 +25,9 @@ const Homepage = ({ code }) => {
   return (
     <div>
       <h1>Welcome, {userName}</h1>
+      <img src="https://i.scdn.co/image/ab6775700000ee85aea295ca3db5dda78f4b986c" />
     </div>
   );
 };
 
-export default Homepage;
+export default ProfilePage;

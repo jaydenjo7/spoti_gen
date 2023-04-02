@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 const useAuth = (code) => {
-  const [accessToken, setAccessToken] = useState();
+  const [accessToken, setAccessToken] = useState(
+    localStorage.getItem("accessToken")
+  );
   const [refreshToken, setRefreshToken] = useState();
   const [expiresIn, setExpiresIn] = useState();
 
   useEffect(() => {
+    if (!code) return;
     axios
       .post("http://localhost:3001/login", {
         code,
@@ -16,6 +19,7 @@ const useAuth = (code) => {
         setRefreshToken(res.data.refreshToken);
         setExpiresIn(res.data.expiresIn);
 
+        localStorage.setItem("accessToken", res.data.accessToken); // store access token in local storage
         window.history.pushState({}, null, "/");
       })
       .catch((err) => {
@@ -34,6 +38,8 @@ const useAuth = (code) => {
         .then((res) => {
           setAccessToken(res.data.accessToken);
           setExpiresIn(res.data.expiresIn);
+
+          localStorage.setItem("accessToken", res.data.accessToken); // update access token in local storage
         })
         .catch((err) => {
           console.log("Error from server:", err.response); // added console log
