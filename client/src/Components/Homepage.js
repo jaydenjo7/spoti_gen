@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Header from "./Header";
 const Homepage = () => {
   return (
     <>
-      <div>homepageee</div>
-      {/* <Link to="/login">login</Link> */}
+      <div>Homepage</div>
     </>
   );
 };

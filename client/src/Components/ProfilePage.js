@@ -5,6 +5,7 @@ import useAuth from "../useAuth";
 const ProfilePage = ({ code }) => {
   const accessToken = useAuth(code);
   const [userName, setUserName] = useState("");
+  const [profilePic, setProfilePic] = useState("");
 
   useEffect(() => {
     if (!accessToken) return;
@@ -16,6 +17,7 @@ const ProfilePage = ({ code }) => {
       })
       .then((res) => {
         setUserName(res.data.display_name);
+        setProfilePic(res.data.images[0].url);
       })
       .catch((err) => {
         console.log(err);
@@ -25,7 +27,7 @@ const ProfilePage = ({ code }) => {
   return (
     <div>
       <h1>Welcome, {userName}</h1>
-      <img src="https://i.scdn.co/image/ab6775700000ee85aea295ca3db5dda78f4b986c" />
+      <img src={profilePic} />
     </div>
   );
 };
