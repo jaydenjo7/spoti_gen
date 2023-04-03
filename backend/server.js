@@ -22,6 +22,39 @@ const options = {
 
 const client = new MongoClient(MONGO_URI, options);
 
+//endpoint that uses spotify api to generate recommended songs based on user's choice
+app.get("/api/recommendations", async (req, res) => {
+  console.log("genres:", req.query.genres);
+  console.log("limit:", req.query.limit);
+  const { genres, limit } = req.query;
+  const accessToken = req.headers.authorization.split(" ")[1];
+  console.log("accessToken:", accessToken);
+  const spotifyApi = new SpotifyWebApi();
+  spotifyApi.setAccessToken(accessToken);
+
+  try {
+    const response = await spotifyApi.getRecommendations({
+      limit: limit,
+      seed_genres: genres.split(","), // convert genres to an array
+    });
+
+    console.log("response body", response);
+    const tracks = response.body.tracks.map((track) => ({
+      id: track.id,
+      name: track.name,
+      artist: track.artists.map((artist) => artist.name).join(", "),
+      album: track.album.name,
+      imageUrl: track.album.images[0].url,
+      previewUrl: track.preview_url,
+    }));
+    console.log("tracks:", tracks);
+    res.json({ tracks: tracks });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch recommendations" });
+  }
+});
+
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
 

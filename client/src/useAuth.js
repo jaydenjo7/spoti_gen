@@ -30,21 +30,25 @@ const useAuth = (code) => {
 
   useEffect(() => {
     if (!refreshToken || !expiresIn) return;
-    const interval = setInterval(() => {
-      axios
-        .post("http://localhost:3001/refresh", {
-          refreshToken,
-        })
-        .then((res) => {
-          setAccessToken(res.data.accessToken);
-          setExpiresIn(res.data.expiresIn);
 
-          localStorage.setItem("accessToken", res.data.accessToken); // update access token in local storage
-        })
-        .catch((err) => {
-          console.log("Error from server:", err.response); // added console log
-          window.location = "/";
-        });
+    const interval = setInterval(() => {
+      const currentTime = Math.floor(Date.now() / 1000); // get current time in seconds
+      if (expiresIn - currentTime <= 300) {
+        axios
+          .post("http://localhost:3001/refresh", {
+            refreshToken,
+          })
+          .then((res) => {
+            setAccessToken(res.data.accessToken);
+            setExpiresIn(res.data.expiresIn);
+
+            localStorage.setItem("accessToken", res.data.accessToken); // update access token in local storage
+          })
+          .catch((err) => {
+            console.log("Error from server:", err.response);
+            window.location = "/";
+          });
+      }
     }, (expiresIn - 60) * 1000);
 
     return () => clearInterval(interval);
