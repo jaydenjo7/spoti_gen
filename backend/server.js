@@ -41,6 +41,7 @@ app.get("/api/recommendations", async (req, res) => {
     console.log("response body", response);
     const tracks = response.body.tracks.map((track) => ({
       id: track.id,
+      uri: track.uri,
       name: track.name,
       artist: track.artists.map((artist) => artist.name).join(", "),
       album: track.album.name,
