@@ -22,13 +22,43 @@ const options = {
 
 const client = new MongoClient(MONGO_URI, options);
 
+//adds generated playists to the database
+app.patch(`/api/users/:username/playlists`, async (req, res) => {
+  const { username } = req.params;
+  const { playlists } = req.body;
+  try {
+    await client.connect();
+    const db = client.db();
+
+    const result = await db
+      .collection("users")
+      .updateOne(
+        { spotifyUsername: username },
+        { $push: { playlists: { link: playlists } } }
+      );
+
+    return res.status(200).json({
+      status: 200,
+      success: true,
+      message: "Playlists added successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: 500,
+      success: false,
+      message: "problem adding playlists",
+    });
+  } finally {
+    client.close();
+  }
+});
+
 //endpoint that uses spotify api to generate recommended songs based on user's choice
 app.get("/api/recommendations", async (req, res) => {
-  console.log("genres:", req.query.genres);
-  console.log("limit:", req.query.limit);
   const { genres, limit } = req.query;
+
   const accessToken = req.headers.authorization.split(" ")[1];
-  console.log("accessToken:", accessToken);
   const spotifyApi = new SpotifyWebApi();
   spotifyApi.setAccessToken(accessToken);
 

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { fetchGenres } from "../handlers/fetchGenres";
+import styled from "styled-components";
+import { COLORS } from "../GlobalStyles";
 
 const Homepage = ({ code }) => {
   const accessToken = useAuth(code);
@@ -12,6 +14,26 @@ const Homepage = ({ code }) => {
   const [allGenres, setAllGenres] = useState([]);
   const [songs, setSongs] = useState([]);
   const [playlistLink, setPlaylistLink] = useState("");
+  const [username, setUsername] = useState("");
+
+  //fetch user's spotify username
+  useEffect(() => {
+    if (!accessToken) return;
+    axios
+      .get("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+      .then((res) => {
+        setUsername(res.data.id);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [accessToken]);
+
+  console.log(username);
 
   //Fetch genres and filter them
   useEffect(() => {
@@ -48,6 +70,7 @@ const Homepage = ({ code }) => {
     }
   };
 
+  //check if songs array is populated
   useEffect(() => {
     const songCheck = async () => {
       if (songs.length > 0) {
@@ -77,8 +100,21 @@ const Homepage = ({ code }) => {
       );
       const createdPlaylistData = response.data;
       const playlistId = createdPlaylistData.id;
-      console.log(playlistId);
       return playlistId;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //add playlist link to user's database. called in "addTracksToPlaylist" function
+  const updateUserPlaylist = async (username, playlistLink) => {
+    // console.log("playlist link: ", playlistLink);
+    console.log(username);
+    try {
+      await axios.patch(`/api/users/${username}/playlists`, {
+        playlists: playlistLink,
+        username: username,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -98,7 +134,9 @@ const Homepage = ({ code }) => {
           },
         }
       );
-      setPlaylistLink(`https://open.spotify.com/playlist/${playlistId}`);
+      const playlistLink = `https://open.spotify.com/playlist/${playlistId}`;
+      setPlaylistLink(playlistLink);
+      await updateUserPlaylist(username, playlistLink);
     } catch (error) {
       console.error(error);
     }
@@ -106,53 +144,87 @@ const Homepage = ({ code }) => {
 
   return (
     <>
-      <select
-        value={genres[0]}
-        onChange={(event) => handleGenreChange(event, 0)}
-      >
-        <option value="">--Choose a genre--</option>
-        {allGenres.map((genre, index) => (
-          <option key={index + genre} value={genre}>
-            {genre}
-          </option>
-        ))}
-      </select>
-      <select
-        value={genres[1]}
-        onChange={(event) => handleGenreChange(event, 1)}
-      >
-        <option value="">--Choose a genre--</option>
-        {allGenres.map((genre, index) => (
-          <option key={index + genre} value={genre}>
-            {genre}
-          </option>
-        ))}
-      </select>
-      <select
-        value={genres[2]}
-        onChange={(event) => handleGenreChange(event, 2)}
-      >
-        <option value="">--Choose a genre--</option>
-        {allGenres.map((genre, index) => (
-          <option key={index + genre} value={genre}>
-            {genre}
-          </option>
-        ))}
-      </select>
-      <button onClick={generatePlaylistSongs}>Generate Playlist</button>
-      <div>
-        {playlistLink && (
-          <p>
-            Your playlist is ready! Click{" "}
-            <a href={playlistLink} target="_blank">
-              here
-            </a>{" "}
-            to open it in Spotify.
+      <StyledHomepage>
+        <StyledDropdownContainer>
+          <p style={{ color: `${COLORS.green}`, marginTop: "30px" }}>
+            Choose your genres:{" "}
           </p>
-        )}
-      </div>
+          <StyledDropdowns
+            value={genres[0]}
+            onChange={(event) => handleGenreChange(event, 0)}
+          >
+            <option value="">--Choose a genre--</option>
+            {allGenres.map((genre, index) => (
+              <option key={index + genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </StyledDropdowns>
+          <StyledDropdowns
+            value={genres[1]}
+            onChange={(event) => handleGenreChange(event, 1)}
+          >
+            <option value="">--Choose a genre--</option>
+            {allGenres.map((genre, index) => (
+              <option key={index + genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </StyledDropdowns>
+          <StyledDropdowns
+            value={genres[2]}
+            onChange={(event) => handleGenreChange(event, 2)}
+          >
+            <option value="">--Choose a genre--</option>
+            {allGenres.map((genre, index) => (
+              <option key={index + genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </StyledDropdowns>
+          <button style={{ marginTop: "30px" }} onClick={generatePlaylistSongs}>
+            Generate Playlist
+          </button>
+        </StyledDropdownContainer>
+        <StyledMessage>
+          {playlistLink && (
+            <p>
+              Your playlist is ready! Click{" "}
+              <a
+                style={{ color: `${COLORS.green}` }}
+                href={playlistLink}
+                target="_blank"
+              >
+                here
+              </a>{" "}
+              to open it in Spotify.
+            </p>
+          )}
+        </StyledMessage>
+      </StyledHomepage>
     </>
   );
 };
+
+const StyledMessage = styled.div`
+  margin-top: 300px;
+  color: ${COLORS.green};
+  text-align: center;
+`;
+
+const StyledHomepage = styled.div`
+  background-color: ${COLORS.black};
+  height: 100vh;
+`;
+
+const StyledDropdownContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  margin-top: 0px;
+`;
+
+const StyledDropdowns = styled.select`
+  margin-top: 30px;
+`;
 
 export default Homepage;
