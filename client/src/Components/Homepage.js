@@ -108,8 +108,6 @@ const Homepage = ({ code }) => {
 
   //add playlist link to user's database. called in "addTracksToPlaylist" function
   const updateUserPlaylist = async (username, playlistLink) => {
-    // console.log("playlist link: ", playlistLink);
-    console.log(username);
     try {
       await axios.patch(`/api/users/${username}/playlists`, {
         playlists: playlistLink,
@@ -153,7 +151,7 @@ const Homepage = ({ code }) => {
             value={genres[0]}
             onChange={(event) => handleGenreChange(event, 0)}
           >
-            <option value="">--Choose a genre--</option>
+            <option value="">--Genre 1--</option>
             {allGenres.map((genre, index) => (
               <option key={index + genre} value={genre}>
                 {genre}
@@ -164,7 +162,7 @@ const Homepage = ({ code }) => {
             value={genres[1]}
             onChange={(event) => handleGenreChange(event, 1)}
           >
-            <option value="">--Choose a genre--</option>
+            <option value="">--Genre 2--</option>
             {allGenres.map((genre, index) => (
               <option key={index + genre} value={genre}>
                 {genre}
@@ -175,16 +173,16 @@ const Homepage = ({ code }) => {
             value={genres[2]}
             onChange={(event) => handleGenreChange(event, 2)}
           >
-            <option value="">--Choose a genre--</option>
+            <option value="">--Genre 3--</option>
             {allGenres.map((genre, index) => (
               <option key={index + genre} value={genre}>
                 {genre}
               </option>
             ))}
           </StyledDropdowns>
-          <button style={{ marginTop: "30px" }} onClick={generatePlaylistSongs}>
+          <StyledButton onClick={generatePlaylistSongs}>
             Generate Playlist
-          </button>
+          </StyledButton>
         </StyledDropdownContainer>
         <StyledMessage>
           {playlistLink && (
@@ -206,6 +204,15 @@ const Homepage = ({ code }) => {
   );
 };
 
+const StyledButton = styled.button`
+  margin-top: 30px;
+  background-color: ${COLORS.green};
+  color: white;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+`;
+
 const StyledMessage = styled.div`
   margin-top: 300px;
   color: ${COLORS.green};
@@ -225,6 +232,16 @@ const StyledDropdownContainer = styled.div`
 
 const StyledDropdowns = styled.select`
   margin-top: 30px;
+
+  select {
+    background-color: ${COLORS.darkerGrey};
+    color: ${COLORS.green};
+  }
+
+  option {
+    background-color: ${COLORS.darkerGrey};
+    color: ${COLORS.green};
+  }
 `;
 
 export default Homepage;

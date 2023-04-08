@@ -6,6 +6,11 @@ const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
 const { v4: uuidv4 } = require("uuid");
 
+//import handlers
+
+const { getPlaylists } = require("./getPlaylists");
+//
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -21,6 +26,9 @@ const options = {
 };
 
 const client = new MongoClient(MONGO_URI, options);
+
+//handler that gets all playlists
+app.get("/api/playlists/:displayName", getPlaylists);
 
 //adds generated playists to the database
 app.patch(`/api/users/:username/playlists`, async (req, res) => {
@@ -86,6 +94,7 @@ app.get("/api/recommendations", async (req, res) => {
   }
 });
 
+//endpoint that handles refreshing the access token
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
 
@@ -104,7 +113,7 @@ app.post("/refresh", (req, res) => {
         expiresIn: data.body.expires_in,
       });
 
-      spotifyApi.setAccessToken(data.body["access_token"]);
+      spotifyApi.setAccessToken(data.body.access_token);
     })
     .catch((err) => {
       console.log(err);
@@ -112,6 +121,7 @@ app.post("/refresh", (req, res) => {
     });
 });
 
+//endpoint that handles login and adds user to database
 app.post("/login", async (req, res) => {
   const code = req.body.code;
   console.log("Received code:", code); // added console log

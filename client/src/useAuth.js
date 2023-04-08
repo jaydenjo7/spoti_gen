@@ -28,6 +28,8 @@ const useAuth = (code) => {
       });
   }, [code]);
 
+  //
+  //handles refresh token
   useEffect(() => {
     if (!refreshToken || !expiresIn) return;
 
