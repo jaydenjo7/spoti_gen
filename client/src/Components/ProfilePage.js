@@ -73,6 +73,7 @@ const ProfilePage = ({ code }) => {
           ...prevImages,
           response.data.images[1].url,
         ]);
+
         setImageLink(response.data.external_urls.spotify);
       } catch (error) {
         console.log(error);

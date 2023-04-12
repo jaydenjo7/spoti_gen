@@ -7,7 +7,7 @@ const dotenv = require("dotenv");
 const { v4: uuidv4 } = require("uuid");
 
 //import handlers
-
+const { handleStatus } = require("./handleStatus");
 const { getPlaylists } = require("./getPlaylists");
 //
 
@@ -26,6 +26,9 @@ const options = {
 };
 
 const client = new MongoClient(MONGO_URI, options);
+
+//handler that adds status to user's status array
+app.post("/api/users/:displayName/status", handleStatus);
 
 //handler that gets all playlists
 app.get("/api/playlists/:displayName", getPlaylists);
