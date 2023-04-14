@@ -4,12 +4,15 @@ import { COLORS } from "../GlobalStyles";
 import useAuth from "../useAuth";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import StatusModal from "./StatusModal";
+import { MdPostAdd } from "react-icons/md";
 
 const Feedpage = ({ code }) => {
   const accessToken = useAuth(code);
   const [displayName, setDisplayName] = useState("");
   const [profilePic, setProfilePic] = useState("");
   const [status, setStatus] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   //fetch user's profile pic and display name
   useEffect(() => {
@@ -29,6 +32,14 @@ const Feedpage = ({ code }) => {
       });
   }, [accessToken]);
 
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
   //sends status to server
   const handleSubmit = () => {
     if (!status) return;
@@ -37,6 +48,7 @@ const Feedpage = ({ code }) => {
       .then((res) => {
         const data = res.data;
         setStatus("");
+        setShowModal(false);
       })
       .catch((err) => {
         console.log(err);
@@ -45,39 +57,41 @@ const Feedpage = ({ code }) => {
 
   return (
     <StyledFeedpage>
-      <StyledStatusContainer>
-        <StyledProfilePic src={profilePic} />
-        <StyledStatusInput
-          type={"text"}
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          placeholder="Tell people about your playlist!"
-        />
-      </StyledStatusContainer>
       <StatusBtnContainer>
-        <StyledPostBtn
-          onClick={() => {
-            handleSubmit();
-          }}
-          type="submit"
-          style={{ cursor: "pointer", color: COLORS.green }}
-        >
-          Post
-        </StyledPostBtn>
+        {showModal && (
+          <StatusModal
+            status={status}
+            onStatusChange={handleStatusChange}
+            onSubmit={handleSubmit}
+          />
+        )}
       </StatusBtnContainer>
+      <div>
+        <StyledPostBtnContainer>
+          <StyledPostBtn
+            onClick={() => {
+              setShowModal((prevState) => !prevState);
+            }}
+            style={{ cursor: "pointer", color: COLORS.green }}
+          />
+        </StyledPostBtnContainer>
+      </div>
     </StyledFeedpage>
   );
 };
 
-const StyledPostBtn = styled.button`
-  border-radius: 20px;
-  border: none;
-  padding: 10px;
-  background-color: ${COLORS.primary};
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  height: 30px;
+// const StyledPostBtnContainer = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-end;
+//   align-items: flex-end;
+// `;
+
+const StyledPostBtnContainer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1;
 `;
 
 const StatusBtnContainer = styled.div`
@@ -85,24 +99,6 @@ const StatusBtnContainer = styled.div`
   flex-direction: row-reverse;
   justify-content: flex-start;
   max-width: 640px;
-`;
-
-const StyledStatusInput = styled.input`
-  height: 50px;
-  width: 512px;
-  border: none;
-  margin-top: 15px;
-  ::placeholder {
-    color: gray;
-  }
-`;
-
-const StyledProfilePic = styled.img`
-  border-radius: 30px;
-  height: 50px;
-  width: 50px;
-  display: flex;
-  margin-right: 15px;
 `;
 
 const StyledStatusContainer = styled.div`
@@ -113,6 +109,11 @@ const StyledStatusContainer = styled.div`
 const StyledFeedpage = styled.div`
   background-color: ${COLORS.black};
   height: 100vh;
+`;
+
+const StyledPostBtn = styled(MdPostAdd)`
+  height: 50px;
+  width: 50px;
 `;
 
 export default Feedpage;

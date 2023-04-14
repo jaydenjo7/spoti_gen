@@ -33,6 +33,8 @@ app.post("/api/users/:displayName/status", handleStatus);
 //handler that gets all playlists
 app.get("/api/playlists/:displayName", getPlaylists);
 
+//handler that gets all statuses
+
 //adds generated playists to the database
 app.patch(`/api/users/:username/playlists`, async (req, res) => {
   const { username } = req.params;
