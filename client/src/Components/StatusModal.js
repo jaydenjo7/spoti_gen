@@ -2,10 +2,17 @@ import React from "react";
 import styled from "styled-components";
 import { COLORS } from "../GlobalStyles";
 
-const StatusModal = ({ status, onStatusChange, onSubmit }) => {
+const StatusModal = ({
+  status,
+  playlistStatus,
+  onStatusChange,
+  onPlaylistChange,
+  onSubmit,
+}) => {
   return (
     <ModalContainer>
       <div>
+        <h1 style={{ color: COLORS.green }}>Add a post to the feed!</h1>
         <StyledStatusInput
           type={"text"}
           value={status}
@@ -17,8 +24,8 @@ const StatusModal = ({ status, onStatusChange, onSubmit }) => {
       <div>
         <StyledStatusInput
           type={"text"}
-          value={status}
-          onChange={onStatusChange}
+          value={playlistStatus}
+          onChange={onPlaylistChange}
           placeholder="Paste the link to your playlist!"
           required
         />
@@ -53,7 +60,7 @@ const StyledPostBtn = styled.button`
 
 const StyledStatusInput = styled.input`
   background-color: ${COLORS.darkerGrey};
-  border-color: ${COLORS.green};
+  color: white;
   height: 50px;
   width: 400px;
   border: none;

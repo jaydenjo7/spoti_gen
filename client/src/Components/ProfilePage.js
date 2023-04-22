@@ -58,7 +58,6 @@ const ProfilePage = ({ code }) => {
       try {
         //get the playlistId from the playlist link
         const playlistId = playlistLink.split("/playlist/")[1];
-        console.log(playlistId);
 
         const response = await axios.get(
           `https://api.spotify.com/v1/playlists/${playlistId}`,
@@ -68,27 +67,22 @@ const ProfilePage = ({ code }) => {
             },
           }
         );
-        // console.log(response.data.external_urls.spotify);
-        setPlaylistImages((prevImages) => [
-          ...prevImages,
-          response.data.images[1].url,
-        ]);
-
-        setImageLink(response.data.external_urls.spotify);
+        return response.data.images[1].url;
       } catch (error) {
         console.log(error);
       }
     };
 
     if (playlists) {
-      playlists.map((playlist) => {
-        const playlistLink = playlist.link;
-        getPlaylistImages(playlistLink);
-      });
+      Promise.all(
+        playlists.map((playlist) => {
+          const playlistLink = playlist.link;
+          return getPlaylistImages(playlistLink);
+        })
+      ).then((images) => setPlaylistImages(images.filter(Boolean)));
     }
   }, [accessToken, displayName, playlists]);
 
-  console.log(playlistImages);
   return (
     <>
       <StyledProfilePage>
@@ -119,6 +113,7 @@ const ProfilePage = ({ code }) => {
 
 const StyledPlaylistImageContainer = styled.div`
   display: flex;
+  flex-wrap: wrap;
 `;
 
 const StyledPlaylistImages = styled.img`

@@ -8,7 +8,10 @@ const { v4: uuidv4 } = require("uuid");
 
 //import handlers
 const { handleStatus } = require("./handleStatus");
+const { handleComments } = require("./handleComments");
 const { getPlaylists } = require("./getPlaylists");
+const { getStatuses } = require("./getStatuses");
+const { getStatusById } = require("./getStatusById");
 //
 
 const app = express();
@@ -27,13 +30,20 @@ const options = {
 
 const client = new MongoClient(MONGO_URI, options);
 
+//handler that gets statuses by its id
+app.get("/feed/:displayName/:statusId", getStatusById);
+
+//handler that adds comments to the status field
+app.post("api/users/:displayName/:statusId/comments", handleComments);
+
 //handler that adds status to user's status array
 app.post("/api/users/:displayName/status", handleStatus);
 
+//handler that gets all statuses
+app.get("/api/status/:displayName", getStatuses);
+
 //handler that gets all playlists
 app.get("/api/playlists/:displayName", getPlaylists);
-
-//handler that gets all statuses
 
 //adds generated playists to the database
 app.patch(`/api/users/:username/playlists`, async (req, res) => {
@@ -172,6 +182,7 @@ app.post("/login", async (req, res) => {
       email: user.body.email,
       playlists: [],
       status: [],
+      comments: [],
     });
 
     res.json({

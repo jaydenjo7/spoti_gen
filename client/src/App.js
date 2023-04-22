@@ -4,6 +4,7 @@ import Login from "./Components/Login";
 import Homepage from "./Components/Homepage";
 import ProfilePage from "./Components/ProfilePage";
 import Feedpage from "./Components/Feedpage";
+import DetailedStatus from "./Components/DetailedStatus";
 import { Route, Routes } from "react-router-dom";
 import Header from "./Components/Header";
 
@@ -19,6 +20,10 @@ const App = () => {
           <Route path="/" element={<Homepage code={code} />} />
           <Route path="/profile" element={<ProfilePage code={code} />} />
           <Route path="/feed" element={<Feedpage code={code} />} />
+          <Route
+            path="/feed/:statusId"
+            element={<DetailedStatus code={code} />}
+          />
         </Routes>
       ) : (
         <Login />

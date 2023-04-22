@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
 require("dotenv").config();
 const { MONGO_URI } = process.env;
+const { v4: uuidv4 } = require("uuid");
 
 const options = {
   useNewUrlParser: true,
@@ -14,6 +15,7 @@ const handleStatus = async (req, res) => {
     const db = client.db();
     const { displayName } = req.params;
     const { status } = req.body;
+    const { playlistStatus } = req.body;
 
     console.log(displayName, status);
 
@@ -29,14 +31,26 @@ const handleStatus = async (req, res) => {
       });
     }
 
+    const statusId = uuidv4();
+
     //update the user's status array
-    await db
-      .collection("users")
-      .updateOne({ displayName: displayName }, { $push: { status: status } });
+    await db.collection("users").updateOne(
+      { displayName: displayName },
+      {
+        $push: {
+          status: {
+            id: statusId,
+            status: status,
+            playlistStatus: playlistStatus,
+            comments: [],
+          },
+        },
+      }
+    );
 
     return res
       .status(200)
-      .json({ status: 200, success: true, message: "status updated" });
+      .json({ status: 200, success: true, message: "success" });
   } catch (error) {
     console.log(error);
     return res
