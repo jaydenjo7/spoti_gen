@@ -38,7 +38,7 @@ const handleComments = async (req, res) => {
 
     const statusIndex = user.status.findIndex((s) => s.id === statusId);
 
-    if (statusId === -1) {
+    if (statusIndex === -1) {
       return res.status(404).json({
         status: 404,
         success: false,

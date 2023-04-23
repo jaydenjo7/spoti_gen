@@ -34,7 +34,7 @@ const client = new MongoClient(MONGO_URI, options);
 app.get("/feed/:displayName/:statusId", getStatusById);
 
 //handler that adds comments to the status field
-app.post("api/users/:displayName/:statusId/comments", handleComments);
+app.post("/api/users/:displayName/:statusId/comments", handleComments);
 
 //handler that adds status to user's status array
 app.post("/api/users/:displayName/status", handleStatus);
