@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { COLORS } from "../GlobalStyles";
-import { BiCommentDetail } from "react-icons/bi";
+import { BiCommentAdd } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FiShare } from "react-icons/fi";
@@ -76,12 +76,7 @@ const Status = ({
           <ActionBtnContainer>
             <StyledBtn>
               <CommentIcon onClick={() => setShowCommentForm(true)}>
-                <StyledComment
-                  onClick={() => {
-                    setComment("");
-                    setComments([]);
-                  }}
-                />
+                <StyledComment />
               </CommentIcon>
             </StyledBtn>
             {/* //Like Button logic  */}
@@ -109,31 +104,6 @@ const Status = ({
           </ActionBtnContainer>
           <StyledSeparator />
         </StatusTextContainer>
-
-        {showCommentForm && (
-          <CommentForm onSubmit={handleSubmitComment}>
-            <CommentInput
-              type="text"
-              placeholder="Add a comment..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-            <CommentButton type="submit">Post</CommentButton>
-            <CancelButton
-              type="button"
-              onClick={() => setShowCommentForm(false)}
-            >
-              Cancel
-            </CancelButton>
-          </CommentForm>
-        )}
-        {comments.length > 0 && (
-          <CommentSection>
-            {comments.map((comment) => (
-              <Comment key={comment}>{comment}</Comment>
-            ))}
-          </CommentSection>
-        )}
       </PageLayout>
     </nav>
   );
@@ -143,56 +113,12 @@ const CommentIcon = styled.span`
   cursor: pointer;
 `;
 
-const CommentSection = styled.div`
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Comment = styled.div`
-  background-color: #f2f2f2;
-  padding: 5px;
-  border-radius: 5px;
-  margin-bottom: 5px;
-`;
-
-const CommentForm = styled.form`
-  display: flex;
-  margin-top: 10px;
-`;
-
-const CommentInput = styled.input`
-  flex-grow: 1;
-  margin-right: 10px;
-  padding: 5px;
-  border-radius: 5px;
-  border: none;
-`;
-
-const StyledComment = styled(BiCommentDetail)`
-  height: 15px;
+const StyledComment = styled(BiCommentAdd)`
+  height: 100%;
   width: 15px;
   color: ${COLORS.green};
   margin-right: 500px;
   /* margin-top: 20px; */
-`;
-
-const CommentButton = styled.button`
-  background-color: ${COLORS.green};
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  cursor: pointer;
-`;
-
-const CancelButton = styled.button`
-  background-color: ${COLORS.green};
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  cursor: pointer;
 `;
 
 const StyledBtn = styled.button`

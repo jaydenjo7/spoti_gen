@@ -5,7 +5,7 @@ import useAuth from "../useAuth";
 import axios from "axios";
 import styled from "styled-components";
 import { COLORS } from "../GlobalStyles";
-import { BiCommentDetail } from "react-icons/bi";
+import { BiCommentAdd } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FiShare } from "react-icons/fi";
@@ -159,6 +159,16 @@ const DetailedStatus = ({ code }) => {
                 <StyledSeparator />
               </StatusTextContainer>
             )}
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <h2
+                style={{
+                  color: COLORS.green,
+                  textAlign: "center",
+                }}
+              >
+                The comment section
+              </h2>
+            </div>
 
             {showCommentForm && (
               <CommentForm onSubmit={handleSubmitComment}>
@@ -168,7 +178,9 @@ const DetailedStatus = ({ code }) => {
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                 />
-                <CommentButton type="submit">Post</CommentButton>
+                <CommentButton style={{ marginRight: "10px" }} type="submit">
+                  Post
+                </CommentButton>
                 <CancelButton
                   type="button"
                   onClick={() => setShowCommentForm(false)}
@@ -180,7 +192,13 @@ const DetailedStatus = ({ code }) => {
             {statusData && statusData.comments && (
               <CommentSection>
                 {statusData.comments.map((comment) => (
-                  <Comment key={comment.id}>{comment.comment}</Comment>
+                  <Comment key={comment.id}>
+                    <div style={{ display: "flex" }}>
+                      <StyledProfilePic src={profilePic} />
+                      {displayName}
+                    </div>
+                    <p style={{ marginLeft: "100px" }}>{comment.comment}</p>
+                  </Comment>
                 ))}
               </CommentSection>
             )}
@@ -211,29 +229,35 @@ const CommentSection = styled.div`
   margin-top: 10px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Comment = styled.div`
-  background-color: #f2f2f2;
-  padding: 5px;
+  background-color: ${COLORS.darkGrey};
+  display: flex;
+  color: ${COLORS.green};
+  padding: 30px;
   border-radius: 5px;
   margin-bottom: 5px;
+  width: 30%;
 `;
 
 const CommentForm = styled.form`
   display: flex;
   margin-top: 10px;
+  justify-content: center;
 `;
 
 const CommentInput = styled.input`
-  flex-grow: 1;
+  /* flex-grow: 1; */
   margin-right: 10px;
   padding: 5px;
   border-radius: 5px;
   border: none;
 `;
 
-const StyledComment = styled(BiCommentDetail)`
+const StyledComment = styled(BiCommentAdd)`
   height: 15px;
   width: 15px;
   color: ${COLORS.green};
