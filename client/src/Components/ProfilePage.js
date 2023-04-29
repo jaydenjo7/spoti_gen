@@ -183,15 +183,15 @@ const ProfilePage = ({ code }) => {
                 <StyledPlaylistImages src={image} key={index} />
               </a>
               <div>
-                <button
+                <StyledShareButton
                   key={playlistLinks[index]}
                   onClick={() => {
                     setShowModal((prevState) => !prevState);
                     setSelectedPlaylistLink(playlistLinks[index]);
                   }}
                 >
-                  share to your feed
-                </button>
+                  Share to your feed
+                </StyledShareButton>
               </div>
             </div>
           ))}
@@ -201,6 +201,16 @@ const ProfilePage = ({ code }) => {
   );
 };
 
+const StyledShareButton = styled.button`
+  margin-top: 10px;
+  margin-left: 10px;
+  background-color: ${COLORS.green};
+  color: white;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+`;
+
 const StyledPlaylistImageContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -208,7 +218,7 @@ const StyledPlaylistImageContainer = styled.div`
 
 const StyledPlaylistImages = styled.img`
   height: 200px;
-  margin: 5px;
+  margin: 10px;
   width: 200px;
 `;
 

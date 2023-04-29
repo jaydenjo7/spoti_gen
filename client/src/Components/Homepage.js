@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { fetchGenres } from "../handlers/fetchGenres";
 import styled from "styled-components";
 import { COLORS } from "../GlobalStyles";
+import { Link } from "react-router-dom";
 
 const Homepage = ({ code }) => {
   const accessToken = useAuth(code);
@@ -194,7 +195,12 @@ const Homepage = ({ code }) => {
               >
                 here
               </a>{" "}
-              to open it in Spotify.
+              to open it in Spotify. Or you can check it out on your profile
+              page{" "}
+              <Link style={{ color: `${COLORS.green}` }} to={"/profile"}>
+                here
+              </Link>
+              !
             </p>
           )}
         </StyledMessage>

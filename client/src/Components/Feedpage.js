@@ -128,6 +128,7 @@ const StatusContainer = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 90px;
+  padding-bottom: 100px;
 `;
 
 const StyledPostBtnContainer = styled.div`

@@ -9,6 +9,7 @@ import { BiCommentAdd } from "react-icons/bi";
 import { AiFillHeart } from "react-icons/ai";
 import { AiOutlineHeart } from "react-icons/ai";
 import { FiShare } from "react-icons/fi";
+import Loader from "./Loader";
 
 const DetailedStatus = ({ code }) => {
   const accessToken = useAuth(code);
@@ -87,7 +88,7 @@ const DetailedStatus = ({ code }) => {
   //   console.log(statusData.comments);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   } else {
     return (
       <StyledCommentPage>
