@@ -44,6 +44,7 @@ const ProfilePage = ({ code }) => {
         const data = response.data.data;
         // console.log(data);
         setPlaylists(data);
+        // setImageLink(data);
       } catch (error) {
         console.log(error);
       }
@@ -51,7 +52,7 @@ const ProfilePage = ({ code }) => {
     getPlaylists();
   }, [accessToken, displayName]);
 
-  //get playlist images
+  //get playlist images and set state
   useEffect(() => {
     const getPlaylistImages = async (playlistLink) => {
       if (!accessToken || !displayName || !playlistLink) return;
@@ -67,11 +68,14 @@ const ProfilePage = ({ code }) => {
             },
           }
         );
+        setImageLink(response.data.external_urls.spotify);
         return response.data.images[1].url;
       } catch (error) {
         console.log(error);
       }
     };
+
+    //Promise.all waits for all of the promises from getPlaylistImages to be resolved before setting state
 
     if (playlists) {
       Promise.all(
