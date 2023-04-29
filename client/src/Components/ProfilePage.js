@@ -3,6 +3,7 @@ import axios from "axios";
 import useAuth from "../useAuth";
 import styled from "styled-components";
 import { COLORS } from "../GlobalStyles";
+import StatusModal from "./StatusModal";
 
 const ProfilePage = ({ code }) => {
   const accessToken = useAuth(code);
@@ -10,7 +11,40 @@ const ProfilePage = ({ code }) => {
   const [profilePic, setProfilePic] = useState("");
   const [playlists, setPlaylists] = useState();
   const [playlistImages, setPlaylistImages] = useState([]);
-  const [imageLink, setImageLink] = useState("");
+  const [playlistLinks, setPlaylistLinks] = useState("");
+  const [status, setStatus] = useState("");
+  const [playlistStatus, setPlaylistStatus] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedPlaylistLink, setSelectedPlaylistLink] = useState("");
+
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+
+  const handlePlaylistChange = (e) => {
+    setPlaylistStatus(e.target.value);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedPlaylistLink("");
+  };
+
+  //sends status to server
+  const handleSubmit = () => {
+    if (!status || !playlistStatus) return;
+    axios
+      .post(`/api/users/${displayName}/status`, { status, playlistStatus })
+      .then((res) => {
+        const data = res.data;
+        setStatus("");
+        setPlaylistStatus("");
+        setShowModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   //fetch user's profile pic and display name
   useEffect(() => {
@@ -42,9 +76,7 @@ const ProfilePage = ({ code }) => {
         });
 
         const data = response.data.data;
-        // console.log(data);
         setPlaylists(data);
-        // setImageLink(data);
       } catch (error) {
         console.log(error);
       }
@@ -54,12 +86,41 @@ const ProfilePage = ({ code }) => {
 
   //get playlist images and set state
   useEffect(() => {
+    // const getPlaylistImages = async (playlistLink) => {
+    //   if (!accessToken || !displayName || !playlistLink) return;
+    //   try {
+    //     //get the playlistId from the playlist link
+    //     const playlistId = playlistLink.split("/playlist/")[1];
+
+    //     const response = await axios.get(
+    //       `https://api.spotify.com/v1/playlists/${playlistId}`,
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${accessToken}`,
+    //         },
+    //       }
+    //     );
+    //     setPlaylistLink(response.data.external_urls.spotify);
+    //     return response.data.images[1].url;
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
+    // //Promise.all waits for all of the promises (fetching the playlistImages) from getPlaylistImages to be resolved before setting state
+
+    // if (playlists) {
+    //   Promise.all(
+    //     playlists.map((playlist) => {
+    //       const playlistLink = playlist.link;
+    //       return getPlaylistImages(playlistLink);
+    //     })
+    //   ).then((images) => setPlaylistImages(images.filter(Boolean)));
+    // }
     const getPlaylistImages = async (playlistLink) => {
       if (!accessToken || !displayName || !playlistLink) return;
       try {
-        //get the playlistId from the playlist link
         const playlistId = playlistLink.split("/playlist/")[1];
-
         const response = await axios.get(
           `https://api.spotify.com/v1/playlists/${playlistId}`,
           {
@@ -68,28 +129,40 @@ const ProfilePage = ({ code }) => {
             },
           }
         );
-        setImageLink(response.data.external_urls.spotify);
-        return response.data.images[1].url;
+        return {
+          image: response.data.images[1].url,
+          link: response.data.external_urls.spotify,
+        };
       } catch (error) {
         console.log(error);
       }
     };
 
-    //Promise.all waits for all of the promises from getPlaylistImages to be resolved before setting state
-
     if (playlists) {
-      Promise.all(
-        playlists.map((playlist) => {
-          const playlistLink = playlist.link;
-          return getPlaylistImages(playlistLink);
+      Promise.all(playlists.map((playlist) => getPlaylistImages(playlist.link)))
+        .then((results) => {
+          setPlaylistImages(results.map((result) => result.image));
+          setPlaylistLinks(results.map((result) => result.link));
         })
-      ).then((images) => setPlaylistImages(images.filter(Boolean)));
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, [accessToken, displayName, playlists]);
-
   return (
     <>
       <StyledProfilePage>
+        {showModal && (
+          <StatusModal
+            status={status}
+            playlistStatus={playlistStatus}
+            onStatusChange={handleStatusChange}
+            onPlaylistChange={handlePlaylistChange}
+            onSubmit={handleSubmit}
+            selectedPlaylistLink={selectedPlaylistLink}
+          />
+        )}
+
         <h1
           style={{
             marginTop: "0px",
@@ -105,9 +178,22 @@ const ProfilePage = ({ code }) => {
 
         <StyledPlaylistImageContainer>
           {playlistImages.map((image, index) => (
-            <a href={imageLink} key={index}>
-              <StyledPlaylistImages src={image} key={index} />
-            </a>
+            <div key={index}>
+              <a href={playlistLinks[index]}>
+                <StyledPlaylistImages src={image} key={index} />
+              </a>
+              <div>
+                <button
+                  key={playlistLinks[index]}
+                  onClick={() => {
+                    setShowModal((prevState) => !prevState);
+                    setSelectedPlaylistLink(playlistLinks[index]);
+                  }}
+                >
+                  share to your feed
+                </button>
+              </div>
+            </div>
           ))}
         </StyledPlaylistImageContainer>
       </StyledProfilePage>
