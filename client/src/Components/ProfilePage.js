@@ -22,7 +22,7 @@ const ProfilePage = ({ code }) => {
   };
 
   const handlePlaylistChange = (e) => {
-    setPlaylistStatus(e.target.value);
+    setSelectedPlaylistLink(e.target.value);
   };
 
   const handleModalClose = () => {
@@ -32,13 +32,16 @@ const ProfilePage = ({ code }) => {
 
   //sends status to server
   const handleSubmit = () => {
-    if (!status || !playlistStatus) return;
+    if (!status || !selectedPlaylistLink) return;
     axios
-      .post(`/api/users/${displayName}/status`, { status, playlistStatus })
+      .post(`/api/users/${displayName}/status`, {
+        status,
+        selectedPlaylistLink,
+      })
       .then((res) => {
         const data = res.data;
         setStatus("");
-        setPlaylistStatus("");
+        setSelectedPlaylistLink("");
         setShowModal(false);
       })
       .catch((err) => {
@@ -86,37 +89,6 @@ const ProfilePage = ({ code }) => {
 
   //get playlist images and set state
   useEffect(() => {
-    // const getPlaylistImages = async (playlistLink) => {
-    //   if (!accessToken || !displayName || !playlistLink) return;
-    //   try {
-    //     //get the playlistId from the playlist link
-    //     const playlistId = playlistLink.split("/playlist/")[1];
-
-    //     const response = await axios.get(
-    //       `https://api.spotify.com/v1/playlists/${playlistId}`,
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${accessToken}`,
-    //         },
-    //       }
-    //     );
-    //     setPlaylistLink(response.data.external_urls.spotify);
-    //     return response.data.images[1].url;
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
-
-    // //Promise.all waits for all of the promises (fetching the playlistImages) from getPlaylistImages to be resolved before setting state
-
-    // if (playlists) {
-    //   Promise.all(
-    //     playlists.map((playlist) => {
-    //       const playlistLink = playlist.link;
-    //       return getPlaylistImages(playlistLink);
-    //     })
-    //   ).then((images) => setPlaylistImages(images.filter(Boolean)));
-    // }
     const getPlaylistImages = async (playlistLink) => {
       if (!accessToken || !displayName || !playlistLink) return;
       try {
@@ -155,7 +127,7 @@ const ProfilePage = ({ code }) => {
         {showModal && (
           <StatusModal
             status={status}
-            playlistStatus={playlistStatus}
+            playlistStatus={selectedPlaylistLink}
             onStatusChange={handleStatusChange}
             onPlaylistChange={handlePlaylistChange}
             onSubmit={handleSubmit}

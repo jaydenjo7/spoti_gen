@@ -15,9 +15,9 @@ const handleStatus = async (req, res) => {
     const db = client.db();
     const { displayName } = req.params;
     const { status } = req.body;
-    const { playlistStatus } = req.body;
+    const { playlistStatus, selectedPlaylistLink } = req.body;
 
-    console.log(displayName, status);
+    console.log(displayName, selectedPlaylistLink);
 
     const user = await db
       .collection("users")
@@ -41,7 +41,7 @@ const handleStatus = async (req, res) => {
           status: {
             id: statusId,
             status: status,
-            playlistStatus: playlistStatus,
+            playlistStatus: playlistStatus || selectedPlaylistLink,
             comments: [],
           },
         },

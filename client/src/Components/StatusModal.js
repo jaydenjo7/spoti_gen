@@ -25,9 +25,9 @@ const StatusModal = ({
       <div>
         <StyledStatusInput
           type={"text"}
+          value={selectedPlaylistLink && playlistStatus}
           onChange={onPlaylistChange}
           placeholder="Paste the link to your playlist!"
-          defaultValue={selectedPlaylistLink}
           required
         />
       </div>
