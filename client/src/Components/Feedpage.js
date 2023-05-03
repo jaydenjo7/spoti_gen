@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import StatusModal from "./StatusModal";
 import { MdPostAdd } from "react-icons/md";
 import Status from "./Status";
+import StatusConfirmation from "./StatusConfirmation";
 
 const Feedpage = ({ code }) => {
   const accessToken = useAuth(code);
@@ -16,6 +17,7 @@ const Feedpage = ({ code }) => {
   const [statusArr, setStatusArr] = useState([]);
   const [playlistStatus, setPlaylistStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [statusConfirmation, setStatusConfirmation] = useState(false);
 
   //fetch user's profile pic and display name
   useEffect(() => {
@@ -57,6 +59,7 @@ const Feedpage = ({ code }) => {
         setStatus("");
         setPlaylistStatus("");
         setShowModal(false);
+        setStatusConfirmation(true);
       })
       .catch((err) => {
         console.log(err);
@@ -83,6 +86,16 @@ const Feedpage = ({ code }) => {
     fetchStatuses();
   }, [accessToken, displayName]);
 
+  //makes confirmation message go away after 3 seconds
+  useEffect(() => {
+    if (statusConfirmation) {
+      const timer = setTimeout(() => {
+        setStatusConfirmation(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [statusConfirmation]);
+
   return (
     <StyledFeedpage>
       <StatusBtnContainer>
@@ -96,6 +109,11 @@ const Feedpage = ({ code }) => {
           />
         )}
       </StatusBtnContainer>
+
+      <StatusBtnContainer>
+        {statusConfirmation && <StatusConfirmation />}
+      </StatusBtnContainer>
+
       <div>
         <StyledPostBtnContainer>
           <StyledPostBtn

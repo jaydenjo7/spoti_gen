@@ -4,6 +4,7 @@ import useAuth from "../useAuth";
 import styled from "styled-components";
 import { COLORS } from "../GlobalStyles";
 import StatusModal from "./StatusModal";
+import StatusConfirmation from "./StatusConfirmation";
 
 const ProfilePage = ({ code }) => {
   const accessToken = useAuth(code);
@@ -16,6 +17,7 @@ const ProfilePage = ({ code }) => {
   const [playlistStatus, setPlaylistStatus] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedPlaylistLink, setSelectedPlaylistLink] = useState("");
+  const [statusConfirmation, setStatusConfirmation] = useState(false);
 
   const handleStatusChange = (e) => {
     setStatus(e.target.value);
@@ -43,6 +45,7 @@ const ProfilePage = ({ code }) => {
         setStatus("");
         setSelectedPlaylistLink("");
         setShowModal(false);
+        setStatusConfirmation(true);
       })
       .catch((err) => {
         console.log(err);
@@ -121,6 +124,17 @@ const ProfilePage = ({ code }) => {
         });
     }
   }, [accessToken, displayName, playlists]);
+
+  //makes confirmation message go away after 3 seconds
+  useEffect(() => {
+    if (statusConfirmation) {
+      const timer = setTimeout(() => {
+        setStatusConfirmation(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [statusConfirmation]);
+
   return (
     <>
       <StyledProfilePage>
@@ -134,6 +148,8 @@ const ProfilePage = ({ code }) => {
             selectedPlaylistLink={selectedPlaylistLink}
           />
         )}
+
+        <div>{statusConfirmation && <StatusConfirmation />}</div>
 
         <h1
           style={{
