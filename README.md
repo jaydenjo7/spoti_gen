@@ -23,11 +23,14 @@ Now that you have your Client ID and Client Secret in hand, you can head over to
 
 1. Open a split terminal
 2. Type cd backend
-3. Type npm run devStart
+3. Type yarn install
+4. Type npm run devStart to start the backend environment
 
 ## The Frontend
-1. On the other terminal, type cd client
-2. Type yarn start
+1. On the other terminal
+2. Type cd client
+3. Type yarn install
+4. Type yarn start to start the frontend environment
 
 
 # That is it for the setup, enjoy Spotigen!
