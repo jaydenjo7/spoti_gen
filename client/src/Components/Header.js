@@ -6,7 +6,7 @@ import axios from "axios";
 import { COLORS } from "../GlobalStyles";
 
 const Header = () => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = sessionStorage.getItem("accessToken");
   const notLoggedIn = !accessToken;
   const [profilePic, setProfilePic] = useState("");
 

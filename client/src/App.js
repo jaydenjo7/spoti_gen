@@ -26,7 +26,7 @@ const App = () => {
           />
         </Routes>
       ) : (
-        <Login />
+        <Login code={code} />
       )}
     </>
   );

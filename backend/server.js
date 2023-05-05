@@ -5,6 +5,7 @@ const SpotifyWebApi = require("spotify-web-api-node");
 const { MongoClient } = require("mongodb");
 const dotenv = require("dotenv");
 const { v4: uuidv4 } = require("uuid");
+const cookieParser = require("cookie-parser");
 
 //import handlers
 const { handleStatus } = require("./handleStatus");
@@ -19,8 +20,10 @@ app.use(cors());
 app.use(bodyParser.json());
 dotenv.config();
 app.use(express.json());
+app.use(cookieParser());
 
 const { SPOTIFY_CLIENT_SECRET } = process.env;
+const { SPOTIFY_CLIENT_ID } = process.env;
 const { MONGO_URI } = process.env;
 
 const options = {
@@ -109,7 +112,8 @@ app.get("/api/recommendations", async (req, res) => {
   }
 });
 
-//endpoint that handles refreshing the access token
+// endpoint that handles refreshing the access token
+
 app.post("/refresh", (req, res) => {
   const refreshToken = req.body.refreshToken;
 
@@ -136,13 +140,13 @@ app.post("/refresh", (req, res) => {
     });
 });
 
-//endpoint that handles login and adds user to database
+// endpoint that handles login and adds user to database
 app.post("/login", async (req, res) => {
   const code = req.body.code;
   console.log("Received code:", code); // added console log
 
   const spotifyApi = new SpotifyWebApi({
-    clientId: "acef137a01a44960b92c90df6bf914d5",
+    clientId: SPOTIFY_CLIENT_ID,
     clientSecret: SPOTIFY_CLIENT_SECRET,
     redirectUri: "http://localhost:3000",
   });

@@ -208,11 +208,14 @@ const StyledPlaylistImages = styled.img`
   height: 200px;
   margin: 10px;
   width: 200px;
+  background-color: ${COLORS.black};
+  box-shadow: 0px 0px 10px 2px ${COLORS.green};
 `;
 
 const StyledProfilePage = styled.div`
-  background-color: ${COLORS.black};
   height: 100vh;
+  background-color: ${COLORS.black};
+  overflow: auto;
 `;
 
 const StyledProfilePic = styled.img`

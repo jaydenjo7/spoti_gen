@@ -3,7 +3,7 @@ import axios from "axios";
 
 const useAuth = (code) => {
   const [accessToken, setAccessToken] = useState(
-    localStorage.getItem("accessToken")
+    sessionStorage.getItem("accessToken")
   );
   const [refreshToken, setRefreshToken] = useState();
   const [expiresIn, setExpiresIn] = useState();
@@ -19,7 +19,7 @@ const useAuth = (code) => {
         setRefreshToken(res.data.refreshToken);
         setExpiresIn(res.data.expiresIn);
 
-        localStorage.setItem("accessToken", res.data.accessToken); // store access token in local storage
+        sessionStorage.setItem("accessToken", res.data.accessToken); // store access token in session storage
         window.history.pushState({}, null, "/");
       })
       .catch((err) => {
@@ -33,8 +33,11 @@ const useAuth = (code) => {
   useEffect(() => {
     if (!refreshToken || !expiresIn) return;
 
+    console.log(refreshToken);
+
     const interval = setInterval(() => {
       const currentTime = Math.floor(Date.now() / 1000); // get current time in seconds
+      console.log("Checking access token...");
       if (expiresIn - currentTime <= 300) {
         axios
           .post("http://localhost:3001/refresh", {
@@ -44,16 +47,19 @@ const useAuth = (code) => {
             setAccessToken(res.data.accessToken);
             setExpiresIn(res.data.expiresIn);
 
-            localStorage.setItem("accessToken", res.data.accessToken); // update access token in local storage
+            sessionStorage.setItem("accessToken", res.data.accessToken); // update access token in session storage
           })
           .catch((err) => {
             console.log("Error from server:", err.response);
             window.location = "/";
           });
       }
-    }, (expiresIn - 60) * 1000);
+    }, (expiresIn - 300) * 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      console.log("Clearing interval...");
+      clearInterval(interval);
+    };
   }, [refreshToken, expiresIn]);
 
   return accessToken;

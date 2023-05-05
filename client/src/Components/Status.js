@@ -92,14 +92,14 @@ const Status = ({
               }}
             >
               {isliked ? (
-                <StyledLike style={{ fill: `${COLORS.darkGrey} ` }} />
+                <StyledLike style={{ fill: `${COLORS.green} ` }} />
               ) : (
                 <StyledNotLiked />
               )}
-              <span style={{ color: COLORS.darkGrey }}>{likeCount}</span>
+              <span style={{ color: COLORS.green }}>{likeCount}</span>
             </StyledBtn>
             <StyledBtn>
-              <StyledShare />
+              <p style={{ color: COLORS.green }}>SG</p>
             </StyledBtn>
           </ActionBtnContainer>
           <StyledSeparator />
@@ -136,14 +136,8 @@ const StyledLike = styled(AiFillHeart)`
 const StyledNotLiked = styled(AiOutlineHeart)`
   height: 15px;
   width: 15px;
-  color: ${COLORS.darkGrey};
+  color: ${COLORS.green};
   cursor: pointer;
-  /* margin-bottom: 15px; */
-`;
-
-const StyledShare = styled(FiShare)`
-  height: 15px;
-  width: 15px;
 `;
 
 const ActionBtnContainer = styled.div`
