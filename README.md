@@ -3,7 +3,9 @@
 # Introduction
 ![image](https://user-images.githubusercontent.com/103136187/236654465-d88d26e3-e440-4712-a55c-16ec38cfe51e.png)
 
-This is a Full-Stack project I made called Spotigen. I used React for the frontend, NodeJs (Express) for the backend, and MongoDB where I stored all user information needed for my app. The idea behind Spotigen is that a user has a selection of five genres of music, those being Hip-Hop, Classical, Rock, Jazz, and Pop. Of these five genres, the user can select three and hit the "Generate Playlist" button, and just like that, Spotigen displays a link to your newly created playlist of 30 random songs of the genres you chose ready for listening in your Spotify account!
+This is a Full-Stack project I made called Spotigen. I used React for the frontend, NodeJs (Express) for the backend, and MongoDB where I stored all user information needed for my app. 
+
+The idea behind Spotigen is that a user has a selection of five genres of music, those being Hip-Hop, Classical, Rock, Jazz, and Pop. Of these five genres, the user can select three and hit the "Generate Playlist" button, and just like that, Spotigen displays a link to your newly created playlist of 30 random songs of the genres you chose ready for listening in your Spotify account!
 
  This was a backend heavy project and there are a lot of comments all throughout my code that give brief explanations of what each endpoint and handler does.
 
